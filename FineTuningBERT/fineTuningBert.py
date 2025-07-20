@@ -47,8 +47,8 @@ ner_model = AutoModelForTokenClassification.from_pretrained(
 )
 
 # Create id2label and label2id mappings (renamed variables)
-id2label_mapping = {str(i): label for i, label in enumerate(label_list)}
-label2id_mapping = {label: str(i) for i, label in enumerate(label_list)}
+id2label_mapping = {i: label for i, label in enumerate(label_list)}
+label2id_mapping = {label: i for i, label in enumerate(label_list)}
 ner_model.config.id2label = id2label_mapping
 ner_model.config.label2id = label2id_mapping
 
@@ -114,7 +114,7 @@ print("Evaluation Results:", evaluation_results)
 
 # Example inference using pipeline (slightly modified print statements)
 from transformers import pipeline
-nlp_pipeline = pipeline("ner", model=ner_model, tokenizer=bert_tokenizer)
+nlp_pipeline = pipeline("ner", model=ner_model.to("cpu"), tokenizer=bert_tokenizer)
 example_text = "Bill Gates is the Founder of Microsoft"
 ner_output = nlp_pipeline(example_text)
 print("Named Entity Recognition Results:", ner_output)
