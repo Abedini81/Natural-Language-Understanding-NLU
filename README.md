@@ -1,29 +1,27 @@
-# Named Entity Recognition with Fine-Tuned BERT
+# Named Entity Recognition with BERT (Fine-Tuning)
 
-This project demonstrates how to fine-tune a pre-trained BERT model (`bert-base-uncased`) for **Named Entity Recognition (NER)** using the **CoNLL-2003** dataset. The goal is to teach BERT how to identify entities like people, organizations, locations, and miscellaneous names in raw text.
+This project is a practical implementation of **Named Entity Recognition (NER)** using a fine-tuned BERT model. I trained the model to detect entities such as people, organizations, locations, and miscellaneous names using the **CoNLL-2003** dataset.
 
 ---
 
 ## What I Did
 
-I walked through the full NER pipeline using the Hugging Face ecosystem:
+### 1. Loaded the Dataset
+I used the Hugging Face `datasets` library to load the `conll2003` dataset, which contains token-level NER annotations.
 
-### 1. **Dataset Loading**
-I used the Hugging Face `datasets` library to load the CoNLL-2003 dataset — a benchmark dataset for NER tasks.
+### 2. Tokenized Input and Aligned Labels
+I used the BERT tokenizer (`bert-base-uncased`) to tokenize the input text. Since BERT splits words into subwords, I aligned the original NER labels to match the tokenized format and ignored special/padding tokens using `-100`.
 
-### 2. **Tokenization & Label Alignment**
-I tokenized the input sentences using BERT’s tokenizer, carefully aligning each word’s label with its subword tokens. Tokens like `"Apple"` and `"##ton"` are treated as part of the same word but still need correct label handling.
+### 3. Prepared the Model
+Then loaded a pre-trained BERT model for token classification and configured it with the correct number of labels. I also set up mappings between label IDs and label names.
 
-### 3. **Model Setup**
-Then loaded a pre-trained BERT model (`bert-base-uncased`) and adapted it for token classification by setting the number of output labels to match the NER tags in the dataset.
+### 4. Fine-Tuned the Model
+Using Hugging Face’s `Trainer` and `TrainingArguments`, I fine-tuned the model on the training set for 3 epochs with evaluation and saving done at each epoch.
 
-### 4. **Training**
-I fine-tuned the model using Hugging Face’s `Trainer` API. I trained for 3 epochs with early logging, saving checkpoints and evaluating on the validation set during training.
+### 5. Evaluated the Model
+I evaluated the model using the `seqeval` metric to compute **precision**, **recall**, **F1 score**, and **accuracy** on the validation set.
 
-### 5. **Evaluation**
-The model was evaluated using the `seqeval` metric (designed for sequence labeling tasks), and I reported key performance metrics: **precision**, **recall**, **F1 score**, and **accuracy**.
-
-### 6. **Inference**
-Finally, tested the trained model on a custom sentence:  
+### 6. Ran Inference
+Finally, I used the trained model in a `pipeline` to perform NER on a custom input sentence:  
 ```text
 "Bill Gates is the Founder of Microsoft"
